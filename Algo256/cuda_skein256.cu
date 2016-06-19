@@ -13,40 +13,296 @@ void Round512v35(uint2 &p0, uint2 &p1, uint2 &p2, uint2 &p3, uint2 &p4, uint2 &p
 }
 
 __forceinline__ __device__
-void Round_8_512v35(const uint2 *const __restrict__ ks, const uint2 *const __restrict__ ts,
-	uint2 &p0, uint2 &p1, uint2 &p2, uint2 &p3, uint2 &p4, uint2 &p5, uint2 &p6, uint2 &p7, int R)
+void Round_8_512v35_1(const uint2 ks[9], const uint2 ts[3],
+uint2 &p0, uint2 &p1, uint2 &p2, uint2 &p3, uint2 &p4, uint2 &p5, uint2 &p6, uint2 &p7)
 {
 	Round512v35(p0, p1, p2, p3, p4, p5, p6, p7, 46, 36, 19, 37);
 	Round512v35(p2, p1, p4, p7, p6, p5, p0, p3, 33, 27, 14, 42);
 	Round512v35(p4, p1, p6, p3, p0, p5, p2, p7, 17, 49, 36, 39);
-	Round512v35(p6, p1, p0, p7, p2, p5, p4, p3, 44,  9, 54, 56);
+	Round512v35(p6, p1, p0, p7, p2, p5, p4, p3, 44, 9, 54, 56);
 
-	p0 += ks[(R+0) % 9];
-	p1 += ks[(R+1) % 9];
-	p2 += ks[(R+2) % 9];
-	p3 += ks[(R+3) % 9];
-	p4 += ks[(R+4) % 9];
-	p5 += ks[(R+5) % 9] + ts[(R+0) % 3];
-	p6 += ks[(R+6) % 9] + ts[(R+1) % 3];
-	p7 += ks[(R+7) % 9] + make_uint2(R, 0);
+	p0 += ks[1];
+	p1 += ks[2];
+	p2 += ks[3];
+	p3 += ks[4];
+	p4 += ks[5];
+	p5 += ks[6] + ts[1];
+	p6 += ks[7] + ts[2];
+	p7 += ks[8] + make_uint2(1, 0);
 
 	Round512v35(p0, p1, p2, p3, p4, p5, p6, p7, 39, 30, 34, 24);
 	Round512v35(p2, p1, p4, p7, p6, p5, p0, p3, 13, 50, 10, 17);
 	Round512v35(p4, p1, p6, p3, p0, p5, p2, p7, 25, 29, 39, 43);
-	Round512v35(p6, p1, p0, p7, p2, p5, p4, p3, 8,  35, 56, 22);
+	Round512v35(p6, p1, p0, p7, p2, p5, p4, p3, 8, 35, 56, 22);
 
-	p0 += ks[(R+1) % 9];
-	p1 += ks[(R+2) % 9];
-	p2 += ks[(R+3) % 9];
-	p3 += ks[(R+4) % 9];
-	p4 += ks[(R+5) % 9];
-	p5 += ks[(R+6) % 9] + ts[(R+1) % 3];
-	p6 += ks[(R+7) % 9] + ts[(R+2) % 3];
-	p7 += ks[(R+8) % 9] + make_uint2(R+1, 0);
+	p0 += ks[2];
+	p1 += ks[3];
+	p2 += ks[4];
+	p3 += ks[5];
+	p4 += ks[6];
+	p5 += ks[7] + ts[2];
+	p6 += ks[8] + ts[0];
+	p7 += ks[0] + make_uint2(2, 0);
+}
+__forceinline__ __device__
+void Round_8_512v35_3(const uint2 ks[9], const uint2 ts[3],
+uint2 &p0, uint2 &p1, uint2 &p2, uint2 &p3, uint2 &p4, uint2 &p5, uint2 &p6, uint2 &p7)
+{
+	Round512v35(p0, p1, p2, p3, p4, p5, p6, p7, 46, 36, 19, 37);
+	Round512v35(p2, p1, p4, p7, p6, p5, p0, p3, 33, 27, 14, 42);
+	Round512v35(p4, p1, p6, p3, p0, p5, p2, p7, 17, 49, 36, 39);
+	Round512v35(p6, p1, p0, p7, p2, p5, p4, p3, 44, 9, 54, 56);
+
+	p0 += ks[3];
+	p1 += ks[4];
+	p2 += ks[5];
+	p3 += ks[6];
+	p4 += ks[7];
+	p5 += ks[8] + ts[0];
+	p6 += ks[0] + ts[1];
+	p7 += ks[1] + make_uint2(3, 0);
+
+	Round512v35(p0, p1, p2, p3, p4, p5, p6, p7, 39, 30, 34, 24);
+	Round512v35(p2, p1, p4, p7, p6, p5, p0, p3, 13, 50, 10, 17);
+	Round512v35(p4, p1, p6, p3, p0, p5, p2, p7, 25, 29, 39, 43);
+	Round512v35(p6, p1, p0, p7, p2, p5, p4, p3, 8, 35, 56, 22);
+
+	p0 += ks[4];
+	p1 += ks[5];
+	p2 += ks[6];
+	p3 += ks[7];
+	p4 += ks[8];
+	p5 += ks[0] + ts[1];
+	p6 += ks[1] + ts[2];
+	p7 += ks[2] + make_uint2(4, 0);
+}
+__forceinline__ __device__
+void Round_8_512v35_5(const uint2 ks[9], const uint2 ts[3],
+uint2 &p0, uint2 &p1, uint2 &p2, uint2 &p3, uint2 &p4, uint2 &p5, uint2 &p6, uint2 &p7)
+{
+	Round512v35(p0, p1, p2, p3, p4, p5, p6, p7, 46, 36, 19, 37);
+	Round512v35(p2, p1, p4, p7, p6, p5, p0, p3, 33, 27, 14, 42);
+	Round512v35(p4, p1, p6, p3, p0, p5, p2, p7, 17, 49, 36, 39);
+	Round512v35(p6, p1, p0, p7, p2, p5, p4, p3, 44, 9, 54, 56);
+
+	p0 += ks[5];
+	p1 += ks[6];
+	p2 += ks[7];
+	p3 += ks[8];
+	p4 += ks[0];
+	p5 += ks[1] + ts[2];
+	p6 += ks[2] + ts[0];
+	p7 += ks[3] + make_uint2(5, 0);
+
+	Round512v35(p0, p1, p2, p3, p4, p5, p6, p7, 39, 30, 34, 24);
+	Round512v35(p2, p1, p4, p7, p6, p5, p0, p3, 13, 50, 10, 17);
+	Round512v35(p4, p1, p6, p3, p0, p5, p2, p7, 25, 29, 39, 43);
+	Round512v35(p6, p1, p0, p7, p2, p5, p4, p3, 8, 35, 56, 22);
+
+	p0 += ks[6];
+	p1 += ks[7];
+	p2 += ks[8];
+	p3 += ks[0];
+	p4 += ks[1];
+	p5 += ks[2] + ts[0];
+	p6 += ks[3] + ts[1];
+	p7 += ks[4] + make_uint2(6, 0);
+}
+__forceinline__ __device__
+void Round_8_512v35_7(const uint2 ks[9], const uint2 ts[3],
+uint2 &p0, uint2 &p1, uint2 &p2, uint2 &p3, uint2 &p4, uint2 &p5, uint2 &p6, uint2 &p7)
+{
+	Round512v35(p0, p1, p2, p3, p4, p5, p6, p7, 46, 36, 19, 37);
+	Round512v35(p2, p1, p4, p7, p6, p5, p0, p3, 33, 27, 14, 42);
+	Round512v35(p4, p1, p6, p3, p0, p5, p2, p7, 17, 49, 36, 39);
+	Round512v35(p6, p1, p0, p7, p2, p5, p4, p3, 44, 9, 54, 56);
+
+	p0 += ks[7];
+	p1 += ks[8];
+	p2 += ks[0];
+	p3 += ks[1];
+	p4 += ks[2];
+	p5 += ks[3] + ts[1];
+	p6 += ks[4] + ts[2];
+	p7 += ks[5] + make_uint2(7, 0);
+
+	Round512v35(p0, p1, p2, p3, p4, p5, p6, p7, 39, 30, 34, 24);
+	Round512v35(p2, p1, p4, p7, p6, p5, p0, p3, 13, 50, 10, 17);
+	Round512v35(p4, p1, p6, p3, p0, p5, p2, p7, 25, 29, 39, 43);
+	Round512v35(p6, p1, p0, p7, p2, p5, p4, p3, 8, 35, 56, 22);
+
+	p0 += ks[8];
+	p1 += ks[0];
+	p2 += ks[1];
+	p3 += ks[2];
+	p4 += ks[3];
+	p5 += ks[4] + ts[2];
+	p6 += ks[5] + ts[0];
+	p7 += ks[6] + make_uint2(8, 0);
+}
+__forceinline__ __device__
+void Round_8_512v35_9(const uint2 ks[9], const uint2 ts[3],
+uint2 &p0, uint2 &p1, uint2 &p2, uint2 &p3, uint2 &p4, uint2 &p5, uint2 &p6, uint2 &p7)
+{
+	Round512v35(p0, p1, p2, p3, p4, p5, p6, p7, 46, 36, 19, 37);
+	Round512v35(p2, p1, p4, p7, p6, p5, p0, p3, 33, 27, 14, 42);
+	Round512v35(p4, p1, p6, p3, p0, p5, p2, p7, 17, 49, 36, 39);
+	Round512v35(p6, p1, p0, p7, p2, p5, p4, p3, 44, 9, 54, 56);
+
+	p0 += ks[0];
+	p1 += ks[1];
+	p2 += ks[2];
+	p3 += ks[3];
+	p4 += ks[4];
+	p5 += ks[5] + ts[0];
+	p6 += ks[6] + ts[1];
+	p7 += ks[7] + make_uint2(9, 0);
+
+	Round512v35(p0, p1, p2, p3, p4, p5, p6, p7, 39, 30, 34, 24);
+	Round512v35(p2, p1, p4, p7, p6, p5, p0, p3, 13, 50, 10, 17);
+	Round512v35(p4, p1, p6, p3, p0, p5, p2, p7, 25, 29, 39, 43);
+	Round512v35(p6, p1, p0, p7, p2, p5, p4, p3, 8, 35, 56, 22);
+
+	p0 += ks[1];
+	p1 += ks[2];
+	p2 += ks[3];
+	p3 += ks[4];
+	p4 += ks[5];
+	p5 += ks[6] + ts[1];
+	p6 += ks[7] + ts[2];
+	p7 += ks[8] + make_uint2(10, 0);
+}
+__forceinline__ __device__
+void Round_8_512v35_11(const uint2 ks[9], const uint2 ts[3],
+uint2 &p0, uint2 &p1, uint2 &p2, uint2 &p3, uint2 &p4, uint2 &p5, uint2 &p6, uint2 &p7)
+{
+	Round512v35(p0, p1, p2, p3, p4, p5, p6, p7, 46, 36, 19, 37);
+	Round512v35(p2, p1, p4, p7, p6, p5, p0, p3, 33, 27, 14, 42);
+	Round512v35(p4, p1, p6, p3, p0, p5, p2, p7, 17, 49, 36, 39);
+	Round512v35(p6, p1, p0, p7, p2, p5, p4, p3, 44, 9, 54, 56);
+
+	p0 += ks[2];
+	p1 += ks[3];
+	p2 += ks[4];
+	p3 += ks[5];
+	p4 += ks[6];
+	p5 += ks[7] + ts[2];
+	p6 += ks[8] + ts[0];
+	p7 += ks[0] + make_uint2(11, 0);
+
+	Round512v35(p0, p1, p2, p3, p4, p5, p6, p7, 39, 30, 34, 24);
+	Round512v35(p2, p1, p4, p7, p6, p5, p0, p3, 13, 50, 10, 17);
+	Round512v35(p4, p1, p6, p3, p0, p5, p2, p7, 25, 29, 39, 43);
+	Round512v35(p6, p1, p0, p7, p2, p5, p4, p3, 8, 35, 56, 22);
+
+	p0 += ks[3];
+	p1 += ks[4];
+	p2 += ks[5];
+	p3 += ks[6];
+	p4 += ks[7];
+	p5 += ks[8] + ts[0];
+	p6 += ks[0] + ts[1];
+	p7 += ks[1] + make_uint2(12, 0);
+}
+__forceinline__ __device__
+void Round_8_512v35_13(const uint2 ks[9], const uint2 ts[3],
+uint2 &p0, uint2 &p1, uint2 &p2, uint2 &p3, uint2 &p4, uint2 &p5, uint2 &p6, uint2 &p7)
+{
+	Round512v35(p0, p1, p2, p3, p4, p5, p6, p7, 46, 36, 19, 37);
+	Round512v35(p2, p1, p4, p7, p6, p5, p0, p3, 33, 27, 14, 42);
+	Round512v35(p4, p1, p6, p3, p0, p5, p2, p7, 17, 49, 36, 39);
+	Round512v35(p6, p1, p0, p7, p2, p5, p4, p3, 44, 9, 54, 56);
+
+	p0 += ks[4];
+	p1 += ks[5];
+	p2 += ks[6];
+	p3 += ks[7];
+	p4 += ks[8];
+	p5 += ks[0] + ts[1];
+	p6 += ks[1] + ts[2];
+	p7 += ks[2] + make_uint2(13, 0);
+
+	Round512v35(p0, p1, p2, p3, p4, p5, p6, p7, 39, 30, 34, 24);
+	Round512v35(p2, p1, p4, p7, p6, p5, p0, p3, 13, 50, 10, 17);
+	Round512v35(p4, p1, p6, p3, p0, p5, p2, p7, 25, 29, 39, 43);
+	Round512v35(p6, p1, p0, p7, p2, p5, p4, p3, 8, 35, 56, 22);
+
+	p0 += ks[5];
+	p1 += ks[6];
+	p2 += ks[7];
+	p3 += ks[8];
+	p4 += ks[0];
+	p5 += ks[1] + ts[2];
+	p6 += ks[2] + ts[0];
+	p7 += ks[3] + make_uint2(14, 0);
+}
+__forceinline__ __device__
+void Round_8_512v35_15(const uint2 ks[9], const uint2 ts[3],
+uint2 &p0, uint2 &p1, uint2 &p2, uint2 &p3, uint2 &p4, uint2 &p5, uint2 &p6, uint2 &p7)
+{
+	Round512v35(p0, p1, p2, p3, p4, p5, p6, p7, 46, 36, 19, 37);
+	Round512v35(p2, p1, p4, p7, p6, p5, p0, p3, 33, 27, 14, 42);
+	Round512v35(p4, p1, p6, p3, p0, p5, p2, p7, 17, 49, 36, 39);
+	Round512v35(p6, p1, p0, p7, p2, p5, p4, p3, 44, 9, 54, 56);
+
+	p0 += ks[6];
+	p1 += ks[7];
+	p2 += ks[8];
+	p3 += ks[0];
+	p4 += ks[1];
+	p5 += ks[2] + ts[0];
+	p6 += ks[3] + ts[1];
+	p7 += ks[4] + make_uint2(15, 0);
+
+	Round512v35(p0, p1, p2, p3, p4, p5, p6, p7, 39, 30, 34, 24);
+	Round512v35(p2, p1, p4, p7, p6, p5, p0, p3, 13, 50, 10, 17);
+	Round512v35(p4, p1, p6, p3, p0, p5, p2, p7, 25, 29, 39, 43);
+	Round512v35(p6, p1, p0, p7, p2, p5, p4, p3, 8, 35, 56, 22);
+
+	p0 += ks[7];
+	p1 += ks[8];
+	p2 += ks[0];
+	p3 += ks[1];
+	p4 += ks[2];
+	p5 += ks[3] + ts[1];
+	p6 += ks[4] + ts[2];
+	p7 += ks[5] + make_uint2(16, 0);
+}
+__forceinline__ __device__
+void Round_8_512v35_17(const uint2 ks[9], const uint2 ts[3],
+uint2 &p0, uint2 &p1, uint2 &p2, uint2 &p3, uint2 &p4, uint2 &p5, uint2 &p6, uint2 &p7)
+{
+	Round512v35(p0, p1, p2, p3, p4, p5, p6, p7, 46, 36, 19, 37);
+	Round512v35(p2, p1, p4, p7, p6, p5, p0, p3, 33, 27, 14, 42);
+	Round512v35(p4, p1, p6, p3, p0, p5, p2, p7, 17, 49, 36, 39);
+	Round512v35(p6, p1, p0, p7, p2, p5, p4, p3, 44, 9, 54, 56);
+
+	p0 += ks[8];
+	p1 += ks[0];
+	p2 += ks[1];
+	p3 += ks[2];
+	p4 += ks[3];
+	p5 += ks[4] + ts[2];
+	p6 += ks[5] + ts[0];
+	p7 += ks[6] + make_uint2(17, 0);
+
+	Round512v35(p0, p1, p2, p3, p4, p5, p6, p7, 39, 30, 34, 24);
+	Round512v35(p2, p1, p4, p7, p6, p5, p0, p3, 13, 50, 10, 17);
+	Round512v35(p4, p1, p6, p3, p0, p5, p2, p7, 25, 29, 39, 43);
+	Round512v35(p6, p1, p0, p7, p2, p5, p4, p3, 8, 35, 56, 22);
+
+	p0 += ks[0];
+	p1 += ks[1];
+	p2 += ks[2];
+	p3 += ks[3];
+	p4 += ks[4];
+	p5 += ks[5] + ts[0];
+	p6 += ks[6] + ts[1];
+	p7 += ks[7] + make_uint2(18, 0);
 }
 
 __forceinline__ __device__
-void Round_8_512v35_final(const uint2 *const __restrict__ ks, const uint2 *const __restrict__ ts,
+void Round_8_512v35_final(const uint2 ks[9], const uint2 ts[3],
 	uint2 &p0, uint2 &p1, uint2 &p2, uint2 &p3, uint2 &p4, uint2 &p5, uint2 &p6, uint2 &p7)
 {
 	Round512v35(p0, p1, p2, p3, p4, p5, p6, p7, 46, 36, 19, 37);
@@ -91,13 +347,13 @@ void skein256_gpu_hash_32(uint32_t threads, uint32_t startNounce, uint2 *outputH
 		{ 0x33EDFC13, 0x3EEDBA18 },
 		{ 0xC73A4E2A, 0xB69D3CFC }
 	};
-	const uint2 t12[6] = {
-		{ 0x20, 0 },
+	const uint2 t12[2][3] = {
+		{ { 0x20, 0 },
 		{ 0, 0xf0000000 },
-		{ 0x20, 0xf0000000 },
-		{ 0x08, 0 },
+		{ 0x20, 0xf0000000 } },
+		{ { 0x08, 0 },
 		{ 0, 0xff000000 },
-		{ 0x08, 0xff000000 }
+		{ 0x08, 0xff000000 } }
 	};
 
 	if (thread < threads)
@@ -116,51 +372,41 @@ void skein256_gpu_hash_32(uint32_t threads, uint32_t startNounce, uint2 *outputH
 		p2 = h2[2] + dt2;
 		p3 = h2[3] + dt3;
 		p4 = h2[4];
-		p5 = h2[5] + t12[0];
-		p6 = h2[6] + t12[1];
+		p5 = h2[5] + t12[0][0];
+		p6 = h2[6] + t12[0][1];
 		p7 = h2[7];
 
 		// forced unroll required
-		Round_8_512v35(h2, t12, p0, p1, p2, p3, p4, p5, p6, p7, 1);
-		Round_8_512v35(h2, t12, p0, p1, p2, p3, p4, p5, p6, p7, 3);
-		Round_8_512v35(h2, t12, p0, p1, p2, p3, p4, p5, p6, p7, 5);
-		Round_8_512v35(h2, t12, p0, p1, p2, p3, p4, p5, p6, p7, 7);
-		Round_8_512v35(h2, t12, p0, p1, p2, p3, p4, p5, p6, p7, 9);
-		Round_8_512v35(h2, t12, p0, p1, p2, p3, p4, p5, p6, p7, 11);
-		Round_8_512v35(h2, t12, p0, p1, p2, p3, p4, p5, p6, p7, 13);
-		Round_8_512v35(h2, t12, p0, p1, p2, p3, p4, p5, p6, p7, 15);
-		Round_8_512v35(h2, t12, p0, p1, p2, p3, p4, p5, p6, p7, 17);
+		Round_8_512v35_1(h2, t12[0], p0, p1, p2, p3, p4, p5, p6, p7);
+		Round_8_512v35_3(h2, t12[0], p0, p1, p2, p3, p4, p5, p6, p7);
+		Round_8_512v35_5(h2, t12[0], p0, p1, p2, p3, p4, p5, p6, p7);
+		Round_8_512v35_7(h2, t12[0], p0, p1, p2, p3, p4, p5, p6, p7);
+		Round_8_512v35_9(h2, t12[0], p0, p1, p2, p3, p4, p5, p6, p7);
+		Round_8_512v35_11(h2, t12[0], p0, p1, p2, p3, p4, p5, p6, p7);
+		Round_8_512v35_13(h2, t12[0], p0, p1, p2, p3, p4, p5, p6, p7);
+		Round_8_512v35_15(h2, t12[0], p0, p1, p2, p3, p4, p5, p6, p7);
+		Round_8_512v35_17(h2, t12[0], p0, p1, p2, p3, p4, p5, p6, p7);
 
 		p0 ^= dt0;
 		p1 ^= dt1;
 		p2 ^= dt2;
 		p3 ^= dt3;
 
-		uint2 h[9];
-		h[0] = p0;
-		h[1] = p1;
-		h[2] = p2;
-		h[3] = p3;
-		h[4] = p4;
-		h[5] = p5;
-		h[6] = p6;
-		h[7] = p7;
-		h[8] = skein_ks_parity ^ h[0] ^ h[1] ^ h[2] ^ h[3] ^ h[4] ^ h[5] ^ h[6] ^ h[7];
+		const uint2 h[9] = { p0, p1, p2, p3, p4, p5, p6, p7, skein_ks_parity ^ h[0] ^ h[1] ^ h[2] ^ h[3] ^ h[4] ^ h[5] ^ h[6] ^ h[7] };
 
-		const uint2 *t = t12+3;
-		p5 += t12[3];  //p5 already equal h[5]
-		p6 += t12[4];
+		p5 += t12[1][0];  //p5 already equal h[5]
+		p6 += t12[1][1];
 
 		// forced unroll
-		Round_8_512v35(h, t, p0, p1, p2, p3, p4, p5, p6, p7, 1);
-		Round_8_512v35(h, t, p0, p1, p2, p3, p4, p5, p6, p7, 3);
-		Round_8_512v35(h, t, p0, p1, p2, p3, p4, p5, p6, p7, 5);
-		Round_8_512v35(h, t, p0, p1, p2, p3, p4, p5, p6, p7, 7);
-		Round_8_512v35(h, t, p0, p1, p2, p3, p4, p5, p6, p7, 9);
-		Round_8_512v35(h, t, p0, p1, p2, p3, p4, p5, p6, p7, 11);
-		Round_8_512v35(h, t, p0, p1, p2, p3, p4, p5, p6, p7, 13);
-		Round_8_512v35(h, t, p0, p1, p2, p3, p4, p5, p6, p7, 15);
-		Round_8_512v35_final(h, t, p0, p1, p2, p3, p4, p5, p6, p7);
+		Round_8_512v35_1(h, t12[1], p0, p1, p2, p3, p4, p5, p6, p7);
+		Round_8_512v35_3(h, t12[1], p0, p1, p2, p3, p4, p5, p6, p7);
+		Round_8_512v35_5(h, t12[1], p0, p1, p2, p3, p4, p5, p6, p7);
+		Round_8_512v35_7(h, t12[1], p0, p1, p2, p3, p4, p5, p6, p7);
+		Round_8_512v35_9(h, t12[1], p0, p1, p2, p3, p4, p5, p6, p7);
+		Round_8_512v35_11(h, t12[1], p0, p1, p2, p3, p4, p5, p6, p7);
+		Round_8_512v35_13(h, t12[1], p0, p1, p2, p3, p4, p5, p6, p7);
+		Round_8_512v35_15(h, t12[1], p0, p1, p2, p3, p4, p5, p6, p7);
+		Round_8_512v35_final(h, t12[1], p0, p1, p2, p3, p4, p5, p6, p7);
 
 		outputHash[0 * threads + thread] = p0;
 		outputHash[1 * threads + thread] = p1;

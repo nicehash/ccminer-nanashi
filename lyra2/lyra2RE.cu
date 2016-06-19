@@ -90,7 +90,7 @@ extern "C" int scanhash_lyra2(int thr_id, struct work* work, uint32_t max_nonce,
 	if (init[thr_id]) throughput = min(throughput, max_nonce - first_nonce);
 
 	if (opt_benchmark)
-		ptarget[7] = 0x000f;
+		ptarget[7] = 0x00ff;
 
 	if (!init[thr_id])
 	{
@@ -103,7 +103,8 @@ extern "C" int scanhash_lyra2(int thr_id, struct work* work, uint32_t max_nonce,
 		groestl256_cpu_init(thr_id, throughput);
 
 		// DMatrix
-		cudaMalloc(&d_matrix[thr_id], (size_t)16 * 8 * 8 * sizeof(uint64_t) * throughput);
+		size_t matrix_sz = sizeof(uint64_t) * 4 * 4;
+		CUDA_SAFE_CALL(cudaMalloc(&d_matrix[thr_id], matrix_sz * throughput));
 		lyra2_cpu_init(thr_id, throughput, d_matrix[thr_id]);
 
 		CUDA_SAFE_CALL(cudaMalloc(&d_hash[thr_id], (size_t)32 * throughput));
