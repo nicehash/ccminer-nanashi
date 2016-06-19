@@ -15,7 +15,6 @@ depcomp
 missing
 install-sh
 stamp-h1
-cpuminer-config.h*
 compile
 config.log
 config.status
@@ -49,8 +48,6 @@ x64/Release/
 .loadpath
 .cproject
 .buildpath
-
-compat/curl-for-windows/
 
 *.ptx
 *.i

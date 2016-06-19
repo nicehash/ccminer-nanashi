@@ -784,7 +784,7 @@ static void api()
 	time_t bindstart;
 	struct sockaddr_in serv;
 	struct sockaddr_in cli;
-	socklen_t clisiz;
+	int clisiz;
 	bool addrok = false;
 	long long counter;
 	char *result;
