@@ -80,6 +80,8 @@ enum {
 };
 #endif
 
+#define NONCES_MAX	8
+
 typedef unsigned char uchar;
 
 #undef unlikely

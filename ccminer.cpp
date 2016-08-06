@@ -231,8 +231,8 @@ Options:\n\
 			jackpot     Jackpot\n\
 			keccak      Keccak-256 (Maxcoin)\n\
 			luffa       Joincoin\n\
-			lyra2       LyraBar\n\
-			lyra2v2     VertCoin\n\
+			lyra2       Lyra2RE(Crypto)\n\
+			lyra2v2     Lyra2REv2(VertCoin)\n\
 			mjollnir    Mjollnircoin\n\
 			myr-gr      Myriad-Groestl\n\
 			neoscrypt   FeatherCoin, Phoenix, UFO...\n\
@@ -262,7 +262,7 @@ Options:\n\
   -i  --intensity=N[,N] GPU intensity 8.0-25.0 (default: auto) \n\
                         Decimals are allowed for fine tuning \n\
       --eco             Use Eco mode\n\
-                        Auto tuning for low energy\n\
+	                    Auto tuning for low energy (Lyra2REv2 only)\n\
       --cuda-schedule   Set device threads scheduling mode (default: auto)\n\
   -f, --diff-factor     Divide difficulty by this factor (default 1.0) \n\
   -m, --diff-multiplier Multiply difficulty by this value (default 1.0) \n\
@@ -285,6 +285,8 @@ Options:\n\
                           long polling is unavailable, in seconds (default: 10)\n\
   -n, --ndevs           list cuda devices\n\
   -N, --statsavg        number of samples used to compute hashrate (default: 30)\n\
+      --coinbase-addr=ADDR  payout address for solo mining\n\
+      --no-getwork      disable getwork support\n\
       --no-gbt          disable getblocktemplate support (height check in solo)\n\
       --no-longpoll     disable X-Long-Polling support\n\
       --no-stratum      disable X-Stratum support\n\
@@ -770,6 +772,7 @@ static bool submit_upstream_work(CURL *curl, struct work *work)
 
 	/* discard if a newer block was received */
 	stale_work = work->height && work->height < g_work.height;
+	/*
 	if (have_stratum && !stale_work && opt_algo != ALGO_ZR5 && opt_algo != ALGO_SCRYPT_JANE) {
 		pthread_mutex_lock(&g_work_lock);
 		if (strlen(work->job_id + 8))
@@ -785,6 +788,7 @@ static bool submit_upstream_work(CURL *curl, struct work *work)
 		}
 		pthread_mutex_unlock(&g_work_lock);
 	}
+	*/
 
 	if (!have_stratum && !stale_work && allow_gbt) {
 		struct work wheight = { 0 };
@@ -903,7 +907,7 @@ static bool submit_upstream_work(CURL *curl, struct work *work)
 			hashlog_remember_submit(work, nonce);
 
 	}
-	else if (work->txs2) 
+	else if (work->txs2)
 	{
 
 		char data_str[2 * sizeof(work->data) + 1];
@@ -1015,7 +1019,7 @@ static bool submit_upstream_work(CURL *curl, struct work *work)
 }
 
 #ifndef ORG
-#define BLOCK_VERSION_CURRENT 4
+#define BLOCK_VERSION_CURRENT 7
 #endif
 
 /* simplified method to only get some extra infos in solo mode */
@@ -1277,7 +1281,7 @@ static bool gbt_work_decode_full(const json_t *val, struct work *work)
 	}
 
 	n = varint_encode(txc_vi, 1 + tx_count);
-	
+
 	work->txs2 = (char*)malloc(2 * (n + cbtx_size + tx_size) + 1);
 	cbin2hex(work->txs2, (char *)txc_vi, n);
 	cbin2hex(work->txs2 + 2 * n, (char *)cbtx, cbtx_size);
@@ -1817,7 +1821,7 @@ static bool stratum_gen_work(struct stratum_ctx *sctx, struct work *work)
 		else
 			sha256d(merkle_root, merkle_root, 64);
 	}
-	
+
 	/* Increment extranonce2 */
 	for (i = 0; i < (int)sctx->xnonce2_size && !++sctx->job.xnonce2[i]; i++);
 
@@ -2526,13 +2530,12 @@ static void *miner_thread(void *userdata)
 		// todo: update all algos to use work->nonces
 		work.nonces[0] = nonceptr[0];
 		if (opt_algo != ALGO_DECRED && opt_algo != ALGO_BLAKE2S) {
-			work.nonces[1] = nonceptr[2];
+			for (int i = 1; i < NONCES_MAX; i++) work.nonces[i] = nonceptr[i * 2];
 		}
 
-		if (rc > 0 && opt_debug)
-			applog(LOG_NOTICE, CL_CYN "found => %08x" CL_GRN " %08x", work.nonces[0], swab32(work.nonces[0]));
-		if (rc > 1 && opt_debug)
-			applog(LOG_NOTICE, CL_CYN "found => %08x" CL_GRN " %08x", work.nonces[1], swab32(work.nonces[1]));
+		for (int i = 0; i < rc; i++) {
+			if (rc > i && opt_debug) applog(LOG_NOTICE, CL_CYN "found => %08x" CL_GRN " %08x", work.nonces[i], swab32(work.nonces[i]));
+		}
 
 		timeval_subtract(&diff, &tv_end, &tv_start);
 
@@ -2626,16 +2629,18 @@ static void *miner_thread(void *userdata)
 				continue;
 			}
 
-			// second nonce found, submit too (on pool only!)
-			if (rc > 1 && work.nonces[1]) {
-				nonceptr[0] = work.nonces[1];
-				if (opt_algo == ALGO_ZR5) {
-					// todo: use + 4..6 index for pok to allow multiple nonces
-					work.data[0] = work.data[22]; // pok
-					work.data[22] = 0;
+			for (int i = 1; i < NONCES_MAX; i++) {
+				// second nonce found, submit too (on pool only!)
+				if (rc > i && work.nonces[i]) {
+					nonceptr[0] = work.nonces[i];
+					if (opt_algo == ALGO_ZR5) {
+						// todo: use + 4..6 index for pok to allow multiple nonces
+						work.data[0] = work.data[22]; // pok
+						work.data[22] = 0;
+					}
+					if (!submit_work(mythr, &work))
+						break;
 				}
-				if (!submit_work(mythr, &work))
-					break;
 			}
 		}
 		nonceptr[0] = start_nonce + hashes_done;
@@ -2922,7 +2927,7 @@ wait_stratum_url:
 			}
 			pthread_mutex_unlock(&g_work_lock);
 		}
-		
+
 		// check we are on the right pool
 		if (switchn != pool_switch_count) goto pool_switched;
 

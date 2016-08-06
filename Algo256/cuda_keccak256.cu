@@ -69,7 +69,7 @@ static void keccak_blockv35(uint2 *s, const uint64_t *keccak_round_constants)
 		s[20] = ROL2(s[2], 62);
 		s[2] = ROL2(s[12], 43);
 		s[12] = ROL2(s[13], 25);
-		s[13] = ROL2(s[19], 8);
+		s[13] = ROL8(s[19]);
 		s[19] = ROL2(s[23], 56);
 		s[23] = ROL2(s[15], 41);
 		s[15] = ROL2(s[4], 27);

@@ -452,6 +452,9 @@
     <ClInclude Include="x11\cuda_x11_simd512_sm2.cuh">
       <Filter>Source Files\CUDA\x11</Filter>
     </ClInclude>
+    <ClInclude Include="lyra2\cuda_lyra2_sm5.cuh">
+      <Filter>Source Files\CUDA\lyra2</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="cuda.cpp">
